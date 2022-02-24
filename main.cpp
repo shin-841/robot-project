@@ -83,10 +83,10 @@ void turn_left(int percent, int counts) //using encoders
 int main(void)
 {
     // Psuedocode
+    int motor_percent = 75; //Input power level here
+    int expected_counts = 43; //Input theoretical counts here (200)
     // When light turns on, move forward 7 5/8 in
-    if (CdS.Value() > 0 && CdS.Value() < .6) {
-        move_forward();
-    }
+    move_forward(motor_percent, 20 * expected_counts);
     // Rotate left 45 degrees
     // Move forward 12 in
     // When light turns on, turn left 90 degrees
@@ -97,3 +97,4 @@ int main(void)
     // Move up until on the top
     // Rotate 180 degrees and move down the ramp
 }
+
