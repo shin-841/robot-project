@@ -6,12 +6,12 @@
 
 AnalogInputPin CdS(FEHIO::P3_0);
 FEHMotor leftWheel(FEHMotor::Motor0, 9.0);
-FEHMotor rightWheel(FEHMotor::Motor1, 9.0);
+FEHMotor rightWheel(FEHMotor::Motor1, 9.0); 
 AnalogInputPin right_opt(FEHIO::P2_0);
 AnalogInputPin middle_opt(FEHIO::P2_1);
 AnalogInputPin left_opt(FEHIO::P2_2);
 DigitalEncoder right_encoder(FEHIO::P0_0);
-DigitalEncoder left_encoder(FEHIO::P0_1);
+DigitalEncoder left_encoder(FEHIO::P3_7);
 
 enum LineStates {
     MIDDLE,
@@ -83,13 +83,50 @@ void turn_left(int percent, int counts) //using encoders
 int main(void)
 {
     // Psuedocode
-    int motor_percent = 75; //Input power level here
+    int motor_percent = 25; //Input power level here
     int expected_counts = 43; //Input theoretical counts here (200)
+    double jukebox;
+    bool begin = true;
     // When light turns on, move forward 7 5/8 in
-    move_forward(motor_percent, 20 * expected_counts);
+    while (begin) {
+        if(CdS.Value() < 1.0 && CdS.Value() > 0) {
+            move_forward(motor_percent, 5 * expected_counts);
+            begin = false;
+        }
+    }
+    
     // Rotate left 45 degrees
+    turn_left(motor_percent, 70);
     // Move forward 12 in
-    // When light turns on, turn left 90 degrees
+    rightWheel.SetPercent(25);
+    leftWheel.SetPercent(25);
+    bool jukeboxValue = true;
+    while (jukeboxValue) {
+        if (CdS.Value() <= .8) {
+            Sleep(.1);
+            rightWheel.Stop();
+            leftWheel.Stop();
+            jukebox = CdS.Value();
+            jukeboxValue = false;
+        }
+        
+    }
+    LCD.Clear();
+    LCD.WriteAt(jukebox, 100, 100);
+    if (jukebox < .35) {
+        turn_left(motor_percent, 50);
+        move_forward(motor_percent, 2 * expected_counts);
+    }
+    else {
+        turn_left(motor_percent, 72);
+        move_forward(motor_percent, expected_counts);
+    }
+    
+    leftWheel.SetPercent(-25);
+    rightWheel.SetPercent(-25);
+    Sleep(2.0);
+    leftWheel.Stop();
+    rightWheel.Stop();
     // Based on the color of the light, turn left or right by 15 degrees
     // When black line is found, follow the line and press the button
     // Move back and turn 90 degrees left
@@ -97,4 +134,3 @@ int main(void)
     // Move up until on the top
     // Rotate 180 degrees and move down the ramp
 }
-
