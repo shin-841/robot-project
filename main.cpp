@@ -102,7 +102,7 @@ int main(void)
     leftWheel.SetPercent(25);
     bool jukeboxValue = true;
     while (jukeboxValue) {
-        if (CdS.Value() <= .8) {
+        if (CdS.Value() <= 1.0) {
             Sleep(.1);
             rightWheel.Stop();
             leftWheel.Stop();
@@ -112,25 +112,25 @@ int main(void)
         
     }
     LCD.Clear();
-    LCD.WriteAt(jukebox, 100, 100);
+    
     if (jukebox < .35) {
+        LCD.WriteAt("Red", 100, 100);
         turn_left(motor_percent, 50);
-        move_forward(motor_percent, 2 * expected_counts);
+        move_forward(motor_percent, (2 * expected_counts + 10));
+        move_forward((-1 * motor_percent), 5 * expected_counts);
+        turn_right(motor_percent, 175);
+        move_forward(motor_percent, 9 * expected_counts);
+        move_forward((-1 * motor_percent), 9 * expected_counts);
     }
     else {
-        turn_left(motor_percent, 72);
-        move_forward(motor_percent, expected_counts);
+        LCD.WriteAt("Blue", 100, 100);
+        move_forward((-1 * motor_percent), 10);
+        turn_left(motor_percent, 70);
+        move_forward(motor_percent, expected_counts + 8);
+        turn_right(motor_percent, 10);
+        move_forward((-1 * motor_percent), 5 * expected_counts);
+        turn_right(motor_percent, 175);
+        move_forward(motor_percent, 9 * expected_counts);
+        move_forward((-1 * motor_percent), 9 * expected_counts);
     }
-    
-    leftWheel.SetPercent(-25);
-    rightWheel.SetPercent(-25);
-    Sleep(2.0);
-    leftWheel.Stop();
-    rightWheel.Stop();
-    // Based on the color of the light, turn left or right by 15 degrees
-    // When black line is found, follow the line and press the button
-    // Move back and turn 90 degrees left
-    // Move forward until behind left and turn left 90 degrees
-    // Move up until on the top
-    // Rotate 180 degrees and move down the ramp
 }
