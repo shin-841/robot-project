@@ -13,6 +13,8 @@ AnalogInputPin left_opt(FEHIO::P2_2);
 DigitalEncoder right_encoder(FEHIO::P0_0);
 DigitalEncoder left_encoder(FEHIO::P3_7);
 FEHServo servoForkLift(FEHServo::Servo7);
+#define SERVO_MIN 500// 607
+#define SERVO_MAX 1968// 1965
 
 enum LineStates {
     MIDDLE,
@@ -100,7 +102,24 @@ void move_while_turning(int rightPercent, int leftPercent, int counts) //using e
 
 int main(void)
 {
-    servoForkLift.TouchCalibrate();
+    //servoForkLift.TouchCalibrate(); //   calibrate servo 
+    
+    servoForkLift.SetMin(SERVO_MIN);
+    servoForkLift.SetMax(SERVO_MAX);
+    //Set arm servo to 0 degrees
+    while(true) {
+        LCD.Clear();
+        servoForkLift.SetDegree(0);
+        LCD.Write("0 degrees");
+        Sleep(2.0);
+        //Set arm servo to 180 
+        LCD.Clear();
+        servoForkLift.SetDegree(180);
+        LCD.Write("180 degrees");
+        Sleep(2.0);
+    }
+    
+    
     /*
     // Psuedocode
     int motor_percent = 25; //Input power level here
