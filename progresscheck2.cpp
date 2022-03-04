@@ -13,8 +13,11 @@ AnalogInputPin left_opt(FEHIO::P2_2);
 DigitalEncoder right_encoder(FEHIO::P0_0);
 DigitalEncoder left_encoder(FEHIO::P3_7);
 FEHServo servoForkLift(FEHServo::Servo7);
-#define SERVO_MIN 500// 607
-#define SERVO_MAX 1968// 1965
+FEHServo servoRack(FEHServo::Servo0);
+#define SERVO_MIN_FORKLIFT 754
+#define SERVO_MAX_FORKLIFT 2269
+#define SERVO_MIN_RACK 736
+#define SERVO_MAX_RACK 2444
 
 enum LineStates {
     MIDDLE,
@@ -102,29 +105,38 @@ void move_while_turning(int rightPercent, int leftPercent, int counts) //using e
 
 int main(void)
 {
-    //servoForkLift.TouchCalibrate(); //   calibrate servo 
-    
-    servoForkLift.SetMin(SERVO_MIN);
-    servoForkLift.SetMax(SERVO_MAX);
+    //servoRack.TouchCalibrate(); //   calibrate servo 
+    /*
+    servoRack.SetMin(SERVO_MIN_RACK);
+    servoRack.SetMax(SERVO_MAX_RACK);
     //Set arm servo to 0 degrees
     while(true) {
         LCD.Clear();
-        servoForkLift.SetDegree(0);
-        LCD.Write("0 degrees");
         Sleep(2.0);
-        //Set arm servo to 180 
-        LCD.Clear();
-        servoForkLift.SetDegree(180);
-        LCD.Write("180 degrees");
-        Sleep(2.0);
+        for (int degree = 180; degree >= 0; degree -= 10) {
+            servoRack.SetDegree(degree);
+            LCD.Write(degree);
+            Sleep(.5);
+        }
+        for (int degree = 0; degree <= 180; degree += 10) {
+            servoRack.SetDegree(degree);
+            LCD.Write(degree);
+            Sleep(.5);
+        }
     }
-    
-    
-    /*
+    */
+
     // Psuedocode
+    LCD.Clear();
+    LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
+    LCD.DrawLine(63, 79, 127, 79);
+    LCD.DrawLine(191, 79, 255, 79);
+    LCD.DrawLine(95, 159, 223, 159);
     int motor_percent = 25; //Input power level here
     int expected_counts = 43; //Input theoretical counts here (200)
-    double jukebox;
+    servoForkLift.SetMin(SERVO_MIN_FORKLIFT);
+    servoForkLift.SetMax(SERVO_MAX_FORKLIFT);
+    servoForkLift.SetDegree(100);
     bool begin = true;
     // When light turns on, move forward 7 5/8 in
     while (begin) {
@@ -140,10 +152,18 @@ int main(void)
     turn_left(motor_percent, 125);
     move_forward(motor_percent, 4 * expected_counts + 5);
     turn_left(motor_percent, 150);
-    move_forward(-1 * motor_percent, 2 * expected_counts + 10);
-    turn_right(motor_percent, 40);
-    move_forward(motor_percent, 3 * expected_counts);
-    move_forward(-1 * motor_percent, expected_counts);
-    turn_right(motor_percent, 30);
-    */
+    move_forward(-1 * motor_percent, 2 * expected_counts + 5);
+    turn_right(motor_percent, 35);
+    move_forward(motor_percent, 3 * expected_counts + 15);
+    for (int degree = 100; degree <= 160; degree += 10) {
+            servoForkLift.SetDegree(degree);
+            Sleep(.1);
+    }
+    Sleep(1.0);
+    move_forward(-1 * motor_percent, 4 * expected_counts);
+    turn_right(motor_percent, 55);
+    move_forward(-1 * motor_percent, 3 * expected_counts);
+    turn_right(motor_percent, 90);
+    move_forward(-1 * motor_percent, 8 * expected_counts + 15);
+    turn_left(motor_percent, 125);
 }
