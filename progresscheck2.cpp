@@ -25,23 +25,33 @@ enum LineStates {
     LEFT
 };
 
-void move_forward(int percent, int counts) //using encoders
+void move_forward(int percent, int counts, int seconds) //using encoders
 {
-    //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    if (seconds == 0) {
+        //Reset encoder counts
+        right_encoder.ResetCounts();
+        left_encoder.ResetCounts();
 
-    //Set both motors to desired percent
-    rightWheel.SetPercent(percent);
-    leftWheel.SetPercent(percent);
+        //Set both motors to desired percent
+        rightWheel.SetPercent(percent);
+        leftWheel.SetPercent(percent);
 
-    //While the average of the left and right encoder is less than counts,
-    //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+        //While the average of the left and right encoder is less than counts,
+        //keep running motors
+        while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
 
-    //Turn off motors
-    rightWheel.Stop();
-    leftWheel.Stop();
+        //Turn off motors
+        rightWheel.Stop();
+        leftWheel.Stop();
+    }
+    else {
+        rightWheel.SetPercent(percent);
+        leftWheel.SetPercent(percent);
+        Sleep(seconds * 1000);
+        rightWheel.Stop();
+        leftWheel.Stop();
+    }
+    
 }
 
 void turn_right(int percent, int counts) //using encoders
@@ -141,29 +151,38 @@ int main(void)
     // When light turns on, move forward 7 5/8 in
     while (begin) {
         if(CdS.Value() < 1.0 && CdS.Value() > 0) {
-            move_forward(motor_percent, 7 * expected_counts + 10);
+            move_forward(motor_percent, 7 * expected_counts + 10, 0);
             begin = false;
         }
     }
     
     // Rotate right 45 degrees
     turn_right(motor_percent, 45);
-    move_forward(motor_percent, 15 * expected_counts);
+    move_forward(motor_percent, 15 * expected_counts, 0);
     turn_left(motor_percent, 125);
-    move_forward(motor_percent, 4 * expected_counts + 5);
+    move_forward(motor_percent, 4 * expected_counts + 5, 0);
     turn_left(motor_percent, 150);
-    move_forward(-1 * motor_percent, 2 * expected_counts + 5);
+    move_forward(-1 * motor_percent, 2 * expected_counts + 5, 0);
     turn_right(motor_percent, 35);
-    move_forward(motor_percent, 3 * expected_counts + 15);
+    move_forward(motor_percent, 3 * expected_counts + 25, 0);
     for (int degree = 100; degree <= 160; degree += 10) {
             servoForkLift.SetDegree(degree);
-            Sleep(.1);
+            Sleep(.05);
+    }
+    for (int i = 0; i < 5; i++) {
+            servoForkLift.SetDegree(155);
+            servoForkLift.SetDegree(160);
     }
     Sleep(1.0);
-    move_forward(-1 * motor_percent, 4 * expected_counts);
+    move_forward(-1 * motor_percent, 4 * expected_counts, 0);
     turn_right(motor_percent, 55);
-    move_forward(-1 * motor_percent, 3 * expected_counts);
+    move_forward(-1 * motor_percent, 3 * expected_counts, 0);
     turn_right(motor_percent, 90);
-    move_forward(-1 * motor_percent, 8 * expected_counts + 15);
-    turn_left(motor_percent, 125);
+    move_forward(-1 * motor_percent, 9 * expected_counts, 0);
+    turn_left(motor_percent, 155);
+    move_forward(motor_percent, 10 * expected_counts, 4);
+    move_forward(-1 * motor_percent, 15, 0);
+    turn_right(motor_percent, 80);
+    turn_left(motor_percent, 80);
+    move_forward(-1 * motor_percent, 11 * expected_counts, 0);
 }
