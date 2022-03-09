@@ -18,6 +18,9 @@ FEHServo servoRack(FEHServo::Servo0);
 #define SERVO_MAX_FORKLIFT 2269
 #define SERVO_MIN_RACK 736
 #define SERVO_MAX_RACK 2444
+#define MOTOR_PERCENT 40
+#define COUNTS_INCHES 40.5
+#define COUNTS_DEGREE 2.48
 
 enum LineStates {
     MIDDLE,
@@ -25,6 +28,7 @@ enum LineStates {
     LEFT
 };
 
+// use 0 for seconds when using encoder
 void move_forward(int percent, int counts, int seconds) //using encoders
 {
     if (seconds == 0) {
@@ -142,8 +146,6 @@ int main(void)
     LCD.DrawLine(63, 79, 127, 79);
     LCD.DrawLine(191, 79, 255, 79);
     LCD.DrawLine(95, 159, 223, 159);
-    int motor_percent = 25; //Input power level here
-    int expected_counts = 43; //Input theoretical counts here (200)
     servoForkLift.SetMin(SERVO_MIN_FORKLIFT);
     servoForkLift.SetMax(SERVO_MAX_FORKLIFT);
     servoForkLift.SetDegree(100);
@@ -151,38 +153,37 @@ int main(void)
     // When light turns on, move forward 7 5/8 in
     while (begin) {
         if(CdS.Value() < 1.0 && CdS.Value() > 0) {
-            move_forward(motor_percent, 7 * expected_counts + 10, 0);
+            move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES + 10, 0);
             begin = false;
         }
     }
-    
-    // Rotate right 45 degrees
-    turn_right(motor_percent, 45);
-    move_forward(motor_percent, 15 * expected_counts, 0);
-    turn_left(motor_percent, 125);
-    move_forward(motor_percent, 4 * expected_counts + 5, 0);
-    turn_left(motor_percent, 150);
-    move_forward(-1 * motor_percent, 2 * expected_counts + 5, 0);
-    turn_right(motor_percent, 35);
-    move_forward(motor_percent, 3 * expected_counts + 25, 0);
-    for (int degree = 100; degree <= 160; degree += 10) {
-            servoForkLift.SetDegree(degree);
-            Sleep(.05);
-    }
-    for (int i = 0; i < 5; i++) {
-            servoForkLift.SetDegree(155);
-            servoForkLift.SetDegree(160);
-    }
+
+    // turn right in order to get on to the ramp
+    turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 16 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
+    // Move forward towards the hot plate
+    move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 30 * COUNTS_DEGREE);
+    // Move forward 2 inches to flip hot plate
+    servoForkLift.SetDegree(150);
+    move_forward(25, 4 * COUNTS_INCHES, 2);
     Sleep(1.0);
-    move_forward(-1 * motor_percent, 4 * expected_counts, 0);
-    turn_right(motor_percent, 55);
-    move_forward(-1 * motor_percent, 3 * expected_counts, 0);
-    turn_right(motor_percent, 90);
-    move_forward(-1 * motor_percent, 9 * expected_counts, 0);
-    turn_left(motor_percent, 155);
-    move_forward(motor_percent, 10 * expected_counts, 4);
-    move_forward(-1 * motor_percent, 15, 0);
-    turn_right(motor_percent, 80);
-    turn_left(motor_percent, 80);
-    move_forward(-1 * motor_percent, 11 * expected_counts, 0);
+    servoForkLift.SetDegree(80);
+    Sleep(.5);
+    move_forward(MOTOR_PERCENT, 20, 0);
+    Sleep(.5);
+    turn_left(MOTOR_PERCENT, 25 * COUNTS_DEGREE);
+    servoForkLift.SetDegree(150);
+    move_forward(-1 * MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 25 * COUNTS_DEGREE);
+    servoForkLift.SetDegree(70);
+    move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 5 * COUNTS_DEGREE);
+    move_forward(25, 2 * COUNTS_INCHES, 0);
+    servoForkLift.SetDegree(100);
+
+    // turn left and move towards a ice cream lever
+    // flip ice cream lever
+    
 }
