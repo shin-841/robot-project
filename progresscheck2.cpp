@@ -169,7 +169,7 @@ int main(void)
     servoForkLift.SetDegree(150);
     move_forward(25, 4 * COUNTS_INCHES, 2);
     Sleep(1.0);
-    servoForkLift.SetDegree(80);
+    servoForkLift.SetDegree(70);
     Sleep(.5);
     move_forward(MOTOR_PERCENT, 20, 0);
     Sleep(.5);
