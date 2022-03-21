@@ -273,7 +273,21 @@ int main(void)
     // turn right in order to get on to the ramp
     turn_right(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 16 * COUNTS_INCHES, 0);
-  
+
+    // Check which ice cream lever to flip
+    if(RPS.GetIceCream() == 0)
+    {
+        // Flip vanilla lever
+    } 
+    else if(RPS.GetIceCream() == 1)
+    {
+        // Flip twist lever
+    }
+    else if(RPS.GetIceCream() == 2)
+    {
+       // Flip chocolate lever
+    }
+    
     // Move servo to flip lever
     servoForkLift.SetDegree(70);
     move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
