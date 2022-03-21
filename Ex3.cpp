@@ -178,13 +178,18 @@ void check_heading(float heading)
         2. Check if the robot is within the desired threshold for the heading based on the orientation
         3. Pulse in the correct direction based on the orientation
     */
-    while(RPS.Heading() >= 0 && (RPS.Heading() < heading - 4 || RPS.Heading() > heading + 4)) {
-        if((RPS.Heading() > heading + 4 && heading != 0) || (RPS.Heading() - 360 > heading + 4))
+    while(RPS.Heading() >= 0 && (heading - RPS.Heading() > 4 || heading - RPS.Heading() < -4)) {
+        int i = heading - RPS.Heading();
+        if(i < 0) 
+        {
+            i = heading - i;
+        }
+        if(i >= 180)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
         }
-        else if(RPS.Heading() < heading - 4 || (heading == 0 && RPS.Heading() < heading + 356))
+        else if(i < 180)
         {
             // Pulse the motors for a short duration in the correct direction
            pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
