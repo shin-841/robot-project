@@ -212,18 +212,23 @@ void check_heading(float heading)
     //checking for proper RPS data and the edge conditions
     //(when you want the robot to go to 0 degrees or close to 0 degrees)
 
-    while(RPS.Heading() >= 0 && (RPS.Heading() < heading - 4 || RPS.Heading() > heading + 4))
-    {
-        if((RPS.Heading() > heading + 4))
+    while(RPS.Heading() >= 0 && (heading - RPS.Heading() > 4 || heading - RPS.Heading() < -4)) {
+        int i = heading - RPS.Heading();
+        if(i < 0) 
+        {
+            i = heading - i;
+        }
+        if(i < 180)
         {
             // Pulse the motors for a short duration in the correct direction
             pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
         }
-        else if(RPS.Heading() < heading - 4)
+        else if(i >= 180)
         {
             // Pulse the motors for a short duration in the correct direction
-            pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
+           pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
         }
+        
         Sleep(RPS_WAIT_TIME_IN_SEC);
     }
 }
@@ -250,8 +255,20 @@ int main(void)
         }
     }
     */
-    // RPS.InitializeTouchMenu();
-
+    /*
+    // Rack and pinion system
+    servoRack.SetMin(SERVO_MIN_RACK);
+    servoRack.SetMax(SERVO_MAX_RACK);
+    int degree;
+    for (degree = 180; degree >= 0; degree -= 5) {
+        servoRack.SetDegree(degree);
+        Sleep(.1);
+    }
+    for (degree = 0; degree <= 180; degree += 5) {
+        servoRack.SetDegree(degree);
+        Sleep(.1);    
+    }
+    */
     // Psuedocode
     LCD.Clear();
     LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
@@ -260,20 +277,27 @@ int main(void)
     LCD.DrawLine(95, 159, 223, 159);
     servoForkLift.SetMin(SERVO_MIN_FORKLIFT);
     servoForkLift.SetMax(SERVO_MAX_FORKLIFT);
+    servoRack.SetMin(SERVO_MIN_RACK);
+    servoRack.SetMax(SERVO_MAX_RACK);
     servoForkLift.SetDegree(100);
+    servoRack.SetDegree(180);
     bool begin = true;
     // When light turns on, move forward 7 5/8 in
     while (begin) {
         if(CdS.Value() < 1.0 && CdS.Value() > 0) {
-            move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES + 10, 0);
+            move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
             begin = false;
         }
     }
 
     // turn right in order to get on to the ramp
-    turn_right(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 16 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 18 * COUNTS_INCHES + 20, 0);
 
+    // turn towards the ice cream machine
+    turn_left(MOTOR_PERCENT, 27 * COUNTS_DEGREE);
+
+    /*
     // Check which ice cream lever to flip
     if(RPS.GetIceCream() == 0)
     {
@@ -287,11 +311,24 @@ int main(void)
     {
        // Flip chocolate lever
     }
-    
-    // Move servo to flip lever
+    */
+
     servoForkLift.SetDegree(70);
-    move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
-    turn_right(MOTOR_PERCENT, 5 * COUNTS_DEGREE);
+    move_forward(25, 0, 3);
+    // Move servo to flip lever
+    move_forward(-25, 4 * COUNTS_INCHES, 0);
+    Sleep(.5);
+    servoForkLift.SetDegree(120);
+    Sleep(7.0);
     move_forward(25, 2 * COUNTS_INCHES, 0);
-    servoForkLift.SetDegree(100);
+    servoForkLift.SetDegree(70);
+    Sleep(.5);
+    servoForkLift.SetDegree(120);
+
+    // Move backwards and towards the button
+    move_forward(-1 * MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 30 * COUNTS_DEGREE);
+    move_forward(-1 * MOTOR_PERCENT + 15, 18 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
+    move_forward(-1 * MOTOR_PERCENT, 0, 3);
 }
