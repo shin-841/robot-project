@@ -299,6 +299,21 @@ int main(void)
     turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 18 * COUNTS_INCHES + 20, 0);
 
+    turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 60 * COUNTS_DEGREE);
+    move_forward(-1 * MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 14 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 0, 2);
+    for (int degree = 100; degree <= 160; degree += 10) {
+            servoForkLift.SetDegree(degree);
+            Sleep(.05);
+    }
+    for (int i = 0; i < 5; i++) {
+            servoForkLift.SetDegree(155);
+            servoForkLift.SetDegree(160);
+    }
+    
     // turn towards the ice cream machine
     turn_left(MOTOR_PERCENT, 27 * COUNTS_DEGREE);
 
