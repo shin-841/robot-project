@@ -235,40 +235,6 @@ void check_heading(float heading)
 
 int main(void)
 {
-    //servoRack.TouchCalibrate(); //   calibrate servo 
-    /*
-    servoRack.SetMin(SERVO_MIN_RACK);
-    servoRack.SetMax(SERVO_MAX_RACK);
-    //Set arm servo to 0 degrees
-    while(true) {
-        LCD.Clear();
-        Sleep(2.0);
-        for (int degree = 180; degree >= 0; degree -= 10) {
-            servoRack.SetDegree(degree);
-            LCD.Write(degree);
-            Sleep(.5);
-        }
-        for (int degree = 0; degree <= 180; degree += 10) {
-            servoRack.SetDegree(degree);
-            LCD.Write(degree);
-            Sleep(.5);
-        }
-    }
-    */
-    /*
-    // Rack and pinion system
-    servoRack.SetMin(SERVO_MIN_RACK);
-    servoRack.SetMax(SERVO_MAX_RACK);
-    int degree;
-    for (degree = 180; degree >= 0; degree -= 5) {
-        servoRack.SetDegree(degree);
-        Sleep(.1);
-    }
-    for (degree = 0; degree <= 180; degree += 5) {
-        servoRack.SetDegree(degree);
-        Sleep(.1);    
-    }
-    */
     // Psuedocode
     LCD.Clear();
     LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
@@ -295,16 +261,19 @@ int main(void)
         }
     }
 
-    // turn right in order to get on to the ramp
+    // Turn right in order to get on to the ramp
     turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 18 * COUNTS_INCHES + 20, 0);
 
+    // Move towards the sink
     turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
     turn_left(MOTOR_PERCENT, 60 * COUNTS_DEGREE);
     move_forward(-1 * MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
     turn_right(MOTOR_PERCENT, 14 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 0, 2);
+    
+    // Move servo down
     for (int degree = 100; degree <= 160; degree += 10) {
             servoForkLift.SetDegree(degree);
             Sleep(.05);
