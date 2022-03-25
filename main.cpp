@@ -9,11 +9,11 @@
 AnalogInputPin CdS(FEHIO::P3_0);
 FEHMotor leftWheel(FEHMotor::Motor0, 9.0);
 FEHMotor rightWheel(FEHMotor::Motor1, 9.0); 
-AnalogInputPin right_opt(FEHIO::P2_0);
-AnalogInputPin middle_opt(FEHIO::P2_1);
-AnalogInputPin left_opt(FEHIO::P2_2);
-DigitalEncoder right_encoder(FEHIO::P0_0);
-DigitalEncoder left_encoder(FEHIO::P3_7);
+AnalogInputPin rightOpt(FEHIO::P1_5);
+AnalogInputPin middleOpt(FEHIO::P1_6);
+AnalogInputPin leftOpt(FEHIO::P1_7);
+DigitalEncoder rightEncoder(FEHIO::P0_0);
+DigitalEncoder leftEncoder(FEHIO::P3_7);
 FEHServo servoForkLift(FEHServo::Servo7);
 FEHServo servoRack(FEHServo::Servo0);
 #define SERVO_MIN_FORKLIFT 754
@@ -58,13 +58,59 @@ void pulse_counterclockwise(int percent, float seconds)
     leftWheel.Stop();
 }
 
+void line_following(int RPSValue) {
+    // Black line around 2 V, not black 0.64 V
+    int state = MIDDLE; // Set the initial state
+    while (true) { // I will follow this line forever!
+        switch(state) {
+            // If I am in the middle of the line...
+            case MIDDLE:
+                // Set motor powers for driving straight
+                rightWheel.SetPercent(15);
+                leftWheel.SetPercent(15);
+                if ( rightOpt.Value() > 1.5 ) {
+                    state = RIGHT; // update a new state
+                } 
+                else if ( leftOpt.Value() > 1.5 ) {
+                    state = LEFT;
+                }
+                break;
+                // If the right sensor is on the line...
+            case RIGHT:
+                // Set motor powers for right turn
+                rightWheel.Stop();
+                leftWheel.Stop();
+                Sleep(.25);
+                leftWheel.SetPercent(15);
+                if( rightOpt.Value() < 1 && leftOpt.Value() < 1 && middleOpt.Value() > 1.5) {
+                    state = MIDDLE;
+                }
+                break;
+            // If the left sensor is on the line...
+            case LEFT:
+                // Set motor powers for right turn
+                rightWheel.Stop();
+                leftWheel.Stop();
+                Sleep(.25);
+                rightWheel.SetPercent(15);
+                if( rightOpt.Value() < 1 && leftOpt.Value() < 1 && middleOpt.Value() > 1.5) {
+                    state = MIDDLE;
+                }
+                break;
+            default: // Error. Something is very wrong.
+                break;
+        }
+        Sleep(.2);
+    }
+}
+
 // use 0 for seconds when using encoder
 void move_forward(int percent, int counts, int seconds) //using encoders
 {
     if (seconds == 0) {
         //Reset encoder counts
-        right_encoder.ResetCounts();
-        left_encoder.ResetCounts();
+        rightEncoder.ResetCounts();
+        leftEncoder.ResetCounts();
 
         //Set both motors to desired percent
         rightWheel.SetPercent(percent);
@@ -72,7 +118,7 @@ void move_forward(int percent, int counts, int seconds) //using encoders
 
         //While the average of the left and right encoder is less than counts,
         //keep running motors
-        while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+        while((leftEncoder.Counts() + rightEncoder.Counts()) / 2. < counts);
 
         //Turn off motors
         rightWheel.Stop();
@@ -91,8 +137,8 @@ void move_forward(int percent, int counts, int seconds) //using encoders
 void turn_right(int percent, int counts) //using encoders
 {
     //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    leftEncoder.ResetCounts();
     //Set both motors to desired percent
     //hint: set right motor backwards, left motor forwards
 
@@ -102,7 +148,7 @@ void turn_right(int percent, int counts) //using encoders
     //While the average of the left and right encoder is less than counts,
     //keep running motors
 
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((leftEncoder.Counts() + rightEncoder.Counts()) / 2. < counts);
 
     //Turn off motors
     rightWheel.Stop();
@@ -112,8 +158,8 @@ void turn_right(int percent, int counts) //using encoders
 void turn_left(int percent, int counts) //using encoders
 {
     //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    leftEncoder.ResetCounts();
     
     //Set both motors to desired percent
     rightWheel.SetPercent(percent);
@@ -121,7 +167,7 @@ void turn_left(int percent, int counts) //using encoders
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((leftEncoder.Counts() + rightEncoder.Counts()) / 2. < counts);
 
     //Turn off motors
     rightWheel.Stop();
@@ -131,8 +177,8 @@ void turn_left(int percent, int counts) //using encoders
 void move_while_turning(int rightPercent, int leftPercent, int counts) //using encoders
 {
     //Reset encoder counts
-    right_encoder.ResetCounts();
-    left_encoder.ResetCounts();
+    rightEncoder.ResetCounts();
+    leftEncoder.ResetCounts();
     
     //Set both motors to desired percent
     rightWheel.SetPercent(rightPercent);
@@ -140,7 +186,7 @@ void move_while_turning(int rightPercent, int leftPercent, int counts) //using e
 
     //While the average of the left and right encoder is less than counts,
     //keep running motors
-    while((left_encoder.Counts() + right_encoder.Counts()) / 2. < counts);
+    while((leftEncoder.Counts() + rightEncoder.Counts()) / 2. < counts);
 
     //Turn off motors
     rightWheel.Stop();
