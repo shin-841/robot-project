@@ -20,7 +20,7 @@ FEHServo servoRack(FEHServo::Servo0);
 #define SERVO_MAX_FORKLIFT 2269
 #define SERVO_MIN_RACK 736
 #define SERVO_MAX_RACK 2444
-#define MOTOR_PERCENT 40
+#define MOTOR_PERCENT 50
 #define COUNTS_INCHES 40.5
 #define COUNTS_DEGREE 2.48
 
@@ -66,8 +66,8 @@ void line_following(int RPSValue) {
             // If I am in the middle of the line...
             case MIDDLE:
                 // Set motor powers for driving straight
-                rightWheel.SetPercent(15);
-                leftWheel.SetPercent(15);
+                rightWheel.SetPercent(30);
+                leftWheel.SetPercent(30);
                 if ( rightOpt.Value() > 1.5 ) {
                     state = RIGHT; // update a new state
                 } 
@@ -81,7 +81,7 @@ void line_following(int RPSValue) {
                 rightWheel.Stop();
                 leftWheel.Stop();
                 Sleep(.25);
-                leftWheel.SetPercent(15);
+                leftWheel.SetPercent(30);
                 if( rightOpt.Value() < 1 && leftOpt.Value() < 1 && middleOpt.Value() > 1.5) {
                     state = MIDDLE;
                 }
@@ -258,7 +258,7 @@ void check_heading(float heading)
     //checking for proper RPS data and the edge conditions
     //(when you want the robot to go to 0 degrees or close to 0 degrees)
 
-    while(RPS.Heading() >= 0 && (heading - RPS.Heading() > 4 || heading - RPS.Heading() < -4)) {
+    while(RPS.Heading() >= 0 && (heading - RPS.Heading() > 10 || heading - RPS.Heading() < -10)) {
         int i = heading - RPS.Heading();
         if(i < 0) 
         {
@@ -281,6 +281,8 @@ void check_heading(float heading)
 
 int main(void)
 {
+    RPS.InitializeTouchMenu();
+
     // Psuedocode
     LCD.Clear();
     LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
@@ -297,20 +299,34 @@ int main(void)
     servoRack.SetMax(SERVO_MAX_RACK);
     servoForkLift.SetDegree(100);
     servoRack.SetDegree(180);
-    
+
     bool begin = true;
     // When light turns on, move forward 7 5/8 in
     while (begin) {
         if(CdS.Value() < 1.0 && CdS.Value() > 0) {
-            move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+            move_forward(MOTOR_PERCENT, 6.5 * COUNTS_INCHES, 0);
             begin = false;
         }
     }
 
     // Turn right in order to get on to the ramp
     turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 18 * COUNTS_INCHES + 20, 0);
+    move_forward(MOTOR_PERCENT, 12 * COUNTS_INCHES, 0);
 
+    // Move towards the ticket
+    check_y(42.8, PLUS);
+    turn_left(MOTOR_PERCENT, 90 * COUNTS_DEGREE);
+    move_forward(-1 * MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+    check_heading(180);
+    check_x(32.599, PLUS);
+
+    // Rack and Pinion system
+    servoRack.SetDegree(0);
+    Sleep(.5);
+    move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
+    Sleep(.1);
+    servoRack.SetDegree(180);
+    /*
     // Move towards the sink
     turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
@@ -347,7 +363,7 @@ int main(void)
        // Flip chocolate lever
     }
     */
-
+    /*
     servoForkLift.SetDegree(70);
     move_forward(25, 0, 3);
     // Move servo to flip lever
@@ -366,4 +382,5 @@ int main(void)
     move_forward(-1 * MOTOR_PERCENT + 15, 18 * COUNTS_INCHES, 0);
     turn_left(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
     move_forward(-1 * MOTOR_PERCENT, 0, 3);
+    */
 }
