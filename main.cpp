@@ -267,12 +267,12 @@ void check_heading(float heading)
         if(i < 180)
         {
             // Pulse the motors for a short duration in the correct direction
-            pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
+            pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
         }
         else if(i >= 180)
         {
             // Pulse the motors for a short duration in the correct direction
-           pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
+           pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
         }
         
         Sleep(RPS_WAIT_TIME_IN_SEC);
