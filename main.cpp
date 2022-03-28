@@ -58,54 +58,8 @@ void pulse_counterclockwise(int percent, float seconds)
     leftWheel.Stop();
 }
 
-void line_following(int RPSValue) {
-    // Black line around 2 V, not black 0.64 V
-    int state = MIDDLE; // Set the initial state
-    while (true) { // I will follow this line forever!
-        switch(state) {
-            // If I am in the middle of the line...
-            case MIDDLE:
-                // Set motor powers for driving straight
-                rightWheel.SetPercent(30);
-                leftWheel.SetPercent(30);
-                if ( rightOpt.Value() > 1.5 ) {
-                    state = RIGHT; // update a new state
-                } 
-                else if ( leftOpt.Value() > 1.5 ) {
-                    state = LEFT;
-                }
-                break;
-                // If the right sensor is on the line...
-            case RIGHT:
-                // Set motor powers for right turn
-                rightWheel.Stop();
-                leftWheel.Stop();
-                Sleep(.25);
-                leftWheel.SetPercent(30);
-                if( rightOpt.Value() < 1 && leftOpt.Value() < 1 && middleOpt.Value() > 1.5) {
-                    state = MIDDLE;
-                }
-                break;
-            // If the left sensor is on the line...
-            case LEFT:
-                // Set motor powers for right turn
-                rightWheel.Stop();
-                leftWheel.Stop();
-                Sleep(.25);
-                rightWheel.SetPercent(15);
-                if( rightOpt.Value() < 1 && leftOpt.Value() < 1 && middleOpt.Value() > 1.5) {
-                    state = MIDDLE;
-                }
-                break;
-            default: // Error. Something is very wrong.
-                break;
-        }
-        Sleep(.2);
-    }
-}
-
 // use 0 for seconds when using encoder
-void move_forward(int percent, int counts, int seconds) //using encoders
+void move_forward(int percent, int counts, float seconds) //using encoders
 {
     if (seconds == 0) {
         //Reset encoder counts
@@ -127,7 +81,7 @@ void move_forward(int percent, int counts, int seconds) //using encoders
     else {
         rightWheel.SetPercent(percent);
         leftWheel.SetPercent(percent);
-        Sleep(seconds * 1000);
+        Sleep(seconds);
         rightWheel.Stop();
         leftWheel.Stop();
     }
@@ -210,12 +164,12 @@ void check_x(float x_coordinate, int orientation)
         if (RPS.X() > x_coordinate + 1)
         {
             // Pulse the motors for a short duration in the correct direction
-            move_forward(-power, 0,PULSE_TIME);
+            move_forward(-power, 0, PULSE_TIME);
         }
         else if (RPS.X() < x_coordinate - 1)
         {
             // Pulse the motors for a short duration in the correct direction
-            move_forward(power, 0,PULSE_TIME);
+            move_forward(power, 0, PULSE_TIME);
         }
         Sleep(RPS_WAIT_TIME_IN_SEC);
     }
@@ -238,7 +192,7 @@ void check_y(float y_coordinate, int orientation)
         if(RPS.Y() > y_coordinate + 1)
         {
             // Pulse the motors for a short duration in the correct direction
-            move_forward(-power, 0,PULSE_TIME);
+            move_forward(-power, 0, PULSE_TIME);
         }
         else if(RPS.Y() < y_coordinate - 1)
         {
@@ -258,7 +212,7 @@ void check_heading(float heading)
     //checking for proper RPS data and the edge conditions
     //(when you want the robot to go to 0 degrees or close to 0 degrees)
 
-    while(RPS.Heading() >= 0 && (RPS.Heading() - heading > 5 || RPS.Heading() - heading < -5)) {
+    while(RPS.Heading() >= 0 && (RPS.Heading() - heading > 2 || RPS.Heading() - heading < -2)) {
         int i = RPS.Heading() - heading;
         if(i < 0) 
         {
@@ -311,14 +265,19 @@ int main(void)
 
     // Turn right in order to get on to the ramp
     turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 12 * COUNTS_INCHES, 0);
-
+    check_heading(90);
+    move_forward(MOTOR_PERCENT, 0, 2.5);
+    check_heading(90);
+    
     // Move towards the ticket
     check_y(42.8, PLUS);
-    turn_left(MOTOR_PERCENT, 90 * COUNTS_DEGREE);
-    move_forward(-1 * MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+
+    turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
+    move_forward(-1 * MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
     check_heading(180);
-    check_x(32.599, PLUS);
+
+    check_x(32.599, MINUS);
+    
 
     // Rack and Pinion system
     servoRack.SetDegree(0);
@@ -382,3 +341,4 @@ int main(void)
     move_forward(-1 * MOTOR_PERCENT, 0, 3);
     */
 }
+
