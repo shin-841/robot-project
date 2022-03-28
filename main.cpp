@@ -258,8 +258,8 @@ void check_heading(float heading)
     //checking for proper RPS data and the edge conditions
     //(when you want the robot to go to 0 degrees or close to 0 degrees)
 
-    while(RPS.Heading() >= 0 && (heading - RPS.Heading() > 10 || heading - RPS.Heading() < -10)) {
-        int i = heading - RPS.Heading();
+    while(RPS.Heading() >= 0 && (RPS.Heading() - heading > 5 || RPS.Heading() - heading < -5)) {
+        int i = RPS.Heading() - heading;
         if(i < 0) 
         {
             i = heading - i;
@@ -267,12 +267,12 @@ void check_heading(float heading)
         if(i < 180)
         {
             // Pulse the motors for a short duration in the correct direction
-            pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
+            pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
         }
         else if(i >= 180)
         {
             // Pulse the motors for a short duration in the correct direction
-           pulse_counterclockwise(-PULSE_POWER, PULSE_TIME);
+           pulse_counterclockwise(PULSE_POWER, PULSE_TIME);
         }
         
         Sleep(RPS_WAIT_TIME_IN_SEC);
@@ -347,7 +347,6 @@ int main(void)
     
     // turn towards the ice cream machine
     turn_left(MOTOR_PERCENT, 27 * COUNTS_DEGREE);
-
     /*
     // Check which ice cream lever to flip
     if(RPS.GetIceCream() == 0)
@@ -375,7 +374,6 @@ int main(void)
     servoForkLift.SetDegree(70);
     Sleep(.5);
     servoForkLift.SetDegree(120);
-
     // Move backwards and towards the button
     move_forward(-1 * MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
     turn_right(MOTOR_PERCENT, 30 * COUNTS_DEGREE);
