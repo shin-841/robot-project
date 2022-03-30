@@ -274,14 +274,15 @@ int main(void)
     // Move right to account for the movement left
     turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, COUNTS_INCHES, 0);
-    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+    turn_left(MOTOR_PERCENT, 25 * COUNTS_DEGREE);  // 20
     check_heading(90);
+
     // Move towards the ticket
-    check_y(44.2, PLUS);
+    check_y(43.9, PLUS);
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
     check_heading(180);
     move_forward(-1 * MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
-    check_x(30.7, MINUS);
+    check_x(31.3, MINUS);
     
     // Rack and Pinion system
     servoRack.SetDegree(0);
@@ -295,6 +296,7 @@ int main(void)
     move_forward(MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
     turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, 0, .75);
+    
     // Move servo down
     for (int degree = 100; degree <= 160; degree += 10) {
             servoForkLift.SetDegree(degree);
@@ -303,50 +305,101 @@ int main(void)
     Sleep(.2);
     move_forward(-MOTOR_PERCENT, .5 * COUNTS_INCHES, 0);
     move_forward(MOTOR_PERCENT,  0, .5);
-    /*
-    // Wiggle servo if tray doesnt't fall
-    for (int i = 0; i < 5; i++) {
-            servoForkLift.SetDegree(155);
-            Sleep(.1);
-            servoForkLift.SetDegree(160);
-            Sleep(.1);
-    }
-    */
     Sleep(.2);
+
+    // Moves towards ice cream lever
     move_forward(-1 * MOTOR_PERCENT, COUNTS_INCHES, 0);
-    check_x(19.099, MINUS);
-    turn_right(MOTOR_PERCENT, 35 * COUNTS_DEGREE); // changed from 30
+    check_x(18.7, MINUS);
+    turn_right(MOTOR_PERCENT, 40 * COUNTS_DEGREE); // changed from 30
     check_heading(90);
-    move_forward(MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
     check_y(52.699, PLUS);
-    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
-    check_heading(135);
     servoForkLift.SetDegree(70);
-    
-    /*
+
     // Check which ice cream lever to flip
-    if(RPS.GetIceCream() == 0)
+    int iceCream = RPS.GetIceCream();
+    if(iceCream == 0)
     {
-        // Flip vanilla lever
+        // Vanilla
+        turn_left(MOTOR_PERCENT, 30 * COUNTS_DEGREE);
+        check_heading(147);
     } 
-    else if(RPS.GetIceCream() == 1)
+    else if(iceCream == 1)
     {
+        // Twist
         turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
         check_heading(135);
-        servoForkLift.SetDegree(70);
     }
-    else if(RPS.GetIceCream() == 2)
+    else if(iceCream == 2)
     {
-       // Flip chocolate lever
+        // Chocolate
+        turn_left(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
+        check_heading(123);
     }
-    */
+    move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+    servoForkLift.SetDegree(120);
+    Sleep(.2);
+    servoForkLift.SetDegree(70);
+    Sleep(.2);
+
+    // Move back and go towards hot plate
+    move_forward(-MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
+    turn_right(MOTOR_PERCENT, 60 * COUNTS_DEGREE);
+    check_heading(0);
+    servoForkLift.SetDegree(150);
+    move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
+    LCD.Clear();
+    check_x(23.8, PLUS);
+    LCD.WriteAt(RPS.X(), 0, 0);
+    turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
+    check_heading(90);
+
+    // Move up to hot plate and flip it
+    move_forward(MOTOR_PERCENT, 0, 1);
+    servoForkLift.SetDegree(70);
+    Sleep(.2);
+    turn_right(MOTOR_PERCENT, 25 * COUNTS_DEGREE);
+    Sleep(.2);
+    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+    servoForkLift.SetDegree(120);
+    Sleep(.2);
+
+    // Move back towards ice cream
+    move_forward(-MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
+    check_y(52.699, PLUS);
+    turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
+    check_x(19.099, MINUS);
+    if(iceCream == 0)
+    {
+        // Vanilla
+        turn_right(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
+        check_heading(147);
+    } 
+    else if(iceCream == 1)
+    {
+        // Twist
+        turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+        check_heading(135);
+    }
+    else if(iceCream == 2)
+    {
+        // Chocolate
+        turn_right(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
+        check_heading(123);
+    }
+    move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+    servoForkLift.SetDegree(70);
+    Sleep(.2);
+    servoForkLift.SetDegree(120);
+    Sleep(.2);
+
     /*
     servoForkLift.SetDegree(70);
     move_forward(25, 0, 3);
     // Move servo to flip lever
     move_forward(-25, 4 * COUNTS_INCHES, 0);
     Sleep(.5);
-    servoForkLift.SetDegree(120);
     Sleep(7.0);
     move_forward(25, 2 * COUNTS_INCHES, 0);
     servoForkLift.SetDegree(70);
@@ -360,4 +413,3 @@ int main(void)
     move_forward(-1 * MOTOR_PERCENT, 0, 3);
     */
 }
-
