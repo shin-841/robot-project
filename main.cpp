@@ -25,7 +25,7 @@ FEHServo servoRack(FEHServo::Servo0);
 #define COUNTS_DEGREE 2.48
 
 // Defines for pulsing the robot
-#define PULSE_TIME .1
+#define PULSE_TIME .08
 #define PULSE_POWER 25
 
 // Orientation of QR Code
@@ -267,7 +267,7 @@ int main(void)
     }
 
     // Turn right in order to get on to the ramp
-    turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
+    turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
     check_heading(90);
     move_forward(MOTOR_PERCENT, 0, 2.5);
 
@@ -278,11 +278,11 @@ int main(void)
     check_heading(90);
 
     // Move towards the ticket
-    check_y(43.9, PLUS);
+    check_y(44.3, PLUS);
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-    check_heading(180);
-    move_forward(-1 * MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
-    check_x(31.3, MINUS);
+    check_heading(184);  // 180
+    move_forward(-1 * MOTOR_PERCENT, 5.5 * COUNTS_INCHES, 0);
+    check_x(32.7, MINUS);
     
     // Rack and Pinion system
     servoRack.SetDegree(0);
@@ -304,6 +304,7 @@ int main(void)
     }
     Sleep(.2);
     move_forward(-MOTOR_PERCENT, .5 * COUNTS_INCHES, 0);
+    Sleep(.1);
     move_forward(MOTOR_PERCENT,  0, .5);
     Sleep(.2);
 
@@ -322,7 +323,7 @@ int main(void)
     {
         // Vanilla
         turn_left(MOTOR_PERCENT, 30 * COUNTS_DEGREE);
-        check_heading(147);
+        check_heading(150);
     } 
     else if(iceCream == 1)
     {
@@ -336,7 +337,7 @@ int main(void)
         turn_left(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
         check_heading(123);
     }
-    move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 7.5 * COUNTS_INCHES, 0);
     servoForkLift.SetDegree(120);
     Sleep(.2);
     servoForkLift.SetDegree(70);
@@ -349,7 +350,7 @@ int main(void)
     servoForkLift.SetDegree(150);
     move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
     LCD.Clear();
-    check_x(23.8, PLUS);
+    check_x(24.2, PLUS);
     LCD.WriteAt(RPS.X(), 0, 0);
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
     check_heading(90);
@@ -368,8 +369,7 @@ int main(void)
     move_forward(-MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
     check_y(52.699, PLUS);
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
-    check_x(19.099, MINUS);
+    check_x(18.7, MINUS);
     if(iceCream == 0)
     {
         // Vanilla
@@ -380,7 +380,7 @@ int main(void)
     {
         // Twist
         turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
-        check_heading(135);
+        check_heading(137);
     }
     else if(iceCream == 2)
     {
@@ -388,12 +388,17 @@ int main(void)
         turn_right(MOTOR_PERCENT, 10 * COUNTS_DEGREE);
         check_heading(123);
     }
-    move_forward(MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 5.5 * COUNTS_INCHES, 0);
     servoForkLift.SetDegree(70);
     Sleep(.2);
     servoForkLift.SetDegree(120);
     Sleep(.2);
 
+    // Go down the ramp
+    move_forward(-MOTOR_PERCENT, 4.5 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 55 * COUNTS_DEGREE);
+    check_heading(270);
+    move_forward(MOTOR_PERCENT, 15 * COUNTS_INCHES, 0);
     /*
     servoForkLift.SetDegree(70);
     move_forward(25, 0, 3);
