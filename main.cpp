@@ -216,7 +216,7 @@ void check_heading(float heading)
         int i = RPS.Heading() - heading;
         if(i < 0) 
         {
-            i = heading - i;
+            i = 360 + i;
         }
         if(i < 180)
         {
@@ -233,18 +233,21 @@ void check_heading(float heading)
     }
 }
 
+void neutralFace(void) {
+    // Neutral Face
+    LCD.Clear();
+    LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
+    LCD.DrawLine(63, 79, 127, 79);
+    LCD.DrawLine(191, 79, 255, 79);
+    LCD.DrawLine(95, 159, 223, 159);
+}
+
 int main(void)
 {
     RPS.InitializeTouchMenu();
 
     // Psuedocode
-    LCD.Clear();
-    LCD.SetFontColor(LIGHTGOLDENRODYELLOW);
-    
-    // Face
-    LCD.DrawLine(63, 79, 127, 79);
-    LCD.DrawLine(191, 79, 255, 79);
-    LCD.DrawLine(95, 159, 223, 159);
+    neutralFace();
     
     // Set servos
     servoForkLift.SetMin(SERVO_MIN_FORKLIFT);
@@ -253,7 +256,7 @@ int main(void)
     servoRack.SetMax(SERVO_MAX_RACK);
     servoForkLift.SetDegree(100);
     servoRack.SetDegree(180);
-
+    
     bool begin = true;
     // When light turns on, move forward 7 5/8 in
     while (begin) {
@@ -267,45 +270,59 @@ int main(void)
     turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
     check_heading(90);
     move_forward(MOTOR_PERCENT, 0, 2.5);
+
+    // Move right to account for the movement left
+    turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
     check_heading(90);
-    
     // Move towards the ticket
-    check_y(42.8, PLUS);
-
+    check_y(44.2, PLUS);
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-    move_forward(-1 * MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
     check_heading(180);
-
-    check_x(32.599, MINUS);
+    move_forward(-1 * MOTOR_PERCENT, 7 * COUNTS_INCHES, 0);
+    check_x(30.7, MINUS);
     
-
     // Rack and Pinion system
     servoRack.SetDegree(0);
     Sleep(.5);
-    move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
     Sleep(.1);
     servoRack.SetDegree(180);
-    /*
-    // Move towards the sink
-    turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
-    turn_left(MOTOR_PERCENT, 60 * COUNTS_DEGREE);
-    move_forward(-1 * MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
-    turn_right(MOTOR_PERCENT, 14 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, 0, 2);
+    check_heading(180);
     
+    // Move towards the sink
+    move_forward(MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
+    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+    move_forward(MOTOR_PERCENT, 0, .75);
     // Move servo down
     for (int degree = 100; degree <= 160; degree += 10) {
             servoForkLift.SetDegree(degree);
             Sleep(.05);
     }
+    Sleep(.2);
+    move_forward(-MOTOR_PERCENT, .5 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT,  0, .5);
+    /*
+    // Wiggle servo if tray doesnt't fall
     for (int i = 0; i < 5; i++) {
             servoForkLift.SetDegree(155);
+            Sleep(.1);
             servoForkLift.SetDegree(160);
+            Sleep(.1);
     }
+    */
+    Sleep(.2);
+    move_forward(-1 * MOTOR_PERCENT, COUNTS_INCHES, 0);
+    check_x(19.099, MINUS);
+    turn_right(MOTOR_PERCENT, 35 * COUNTS_DEGREE); // changed from 30
+    check_heading(90);
+    move_forward(MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
+    check_y(52.699, PLUS);
+    turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+    check_heading(135);
+    servoForkLift.SetDegree(70);
     
-    // turn towards the ice cream machine
-    turn_left(MOTOR_PERCENT, 27 * COUNTS_DEGREE);
     /*
     // Check which ice cream lever to flip
     if(RPS.GetIceCream() == 0)
@@ -314,7 +331,9 @@ int main(void)
     } 
     else if(RPS.GetIceCream() == 1)
     {
-        // Flip twist lever
+        turn_left(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+        check_heading(135);
+        servoForkLift.SetDegree(70);
     }
     else if(RPS.GetIceCream() == 2)
     {
