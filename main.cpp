@@ -306,7 +306,7 @@ int main(void)
     servoRack.SetDegree(180);
     
     RPS.InitializeTouchMenu();
-    
+    /*
     calibrateRPS();
     
     // Place values in variables
@@ -315,14 +315,16 @@ int main(void)
         SD.FScanf(ifptr, "%f%f", &X[i], &Y[i]);
     }
     SD.FClose(ifptr);
-    
+    */
+
     // Save starting values
     double startingX = RPS.X();
     double startingY = RPS.Y();
-
+    /*
     // Account for placement back to the center
     Sleep(5.0);
-    
+    */
+
     // Psuedocode
     neutralFace();
     
@@ -508,10 +510,12 @@ int main(void)
         }
         
     }
+
     /*
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
     check_heading(270);
     */
+
     LCD.Clear();
     
     if (jukebox < .35) {
