@@ -21,7 +21,7 @@ FEHServo servoRack(FEHServo::Servo0);
 #define SERVO_MIN_FORKLIFT 754
 #define SERVO_MAX_FORKLIFT 2269
 #define SERVO_MIN_RACK 736
-#define SERVO_MAX_RACK 2470
+#define SERVO_MAX_RACK 2480
 #define MOTOR_PERCENT 50
 #define COUNTS_INCHES 40.5
 #define COUNTS_DEGREE 2.48
@@ -413,12 +413,12 @@ int main(void)
     // Turn right in order to get on to the ramp
     turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
     check_heading(90);
-    move_forward(MOTOR_PERCENT, 0, 2.5);
+    move_forward(MOTOR_PERCENT, 0, 2.6);
 
     // Move right to account for the movement left
     turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
     move_forward(MOTOR_PERCENT, COUNTS_INCHES, 0);
-    turn_left(MOTOR_PERCENT, 27 * COUNTS_DEGREE);  // 20
+    turn_left(MOTOR_PERCENT, 30 * COUNTS_DEGREE);  // 20
     check_heading(90);
 
     // Move towards the ticket
@@ -433,7 +433,7 @@ int main(void)
     Sleep(.5);
     move_forward(MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
     Sleep(.1);
-    for (degree = 0; degree < 180; degree += 30) {
+    for (degree = 0; degree <= 180; degree += 20) {
         servoRack.SetDegree(degree);
         Sleep(.05);
     }
@@ -495,7 +495,7 @@ int main(void)
         Sleep(.2);
         uwu();
         move_forward(-MOTOR_PERCENT, 6 * COUNTS_INCHES, 0);
-        turn_right(MOTOR_PERCENT, 80 * COUNTS_DEGREE);
+        turn_right(MOTOR_PERCENT, 75 * COUNTS_DEGREE);
     }
     else if(iceCream == 2)
     {
@@ -534,10 +534,10 @@ int main(void)
 
     // Move back towards ice cream lever
     owo();
-    move_forward(-MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
+    move_forward(-MOTOR_PERCENT, 3 * COUNTS_INCHES, 0);
     check_y(Y[1], PLUS); // 52.699
     turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 2 * COUNTS_INCHES, 0);
     check_x(X[1], MINUS); // 18.7
     if(iceCream == 0)
     {
@@ -548,13 +548,13 @@ int main(void)
     else if(iceCream == 1)
     {
         // Twist
-        turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
+        turn_right(MOTOR_PERCENT, 13 * COUNTS_DEGREE);
         check_heading(Heading[1]);
     }
     else if(iceCream == 2)
     {
         // Chocolate
-        turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
+        turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
         check_heading(Heading[1] - 13);
     }
     move_forward(MOTOR_PERCENT, 5.5 * COUNTS_INCHES, 0);
@@ -571,25 +571,25 @@ int main(void)
     if(iceCream == 0)
     {
         // Vanilla
-        turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
+        turn_left(MOTOR_PERCENT, 55 * COUNTS_DEGREE);
     } 
     else if(iceCream == 1)
     {
         // Twist
-        turn_left(MOTOR_PERCENT, 60 * COUNTS_DEGREE);
+        turn_left(MOTOR_PERCENT, 65 * COUNTS_DEGREE);
     }
     else if(iceCream == 2)
     {
         // Chocolate
-        turn_left(MOTOR_PERCENT, 70 * COUNTS_DEGREE);
+        turn_left(MOTOR_PERCENT, 75 * COUNTS_DEGREE);
     }
     check_heading(270);
-    move_forward(MOTOR_PERCENT, 19 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 20 * COUNTS_INCHES, 0);
     check_y(Y[3], MINUS); // 12.8
 
     // Turn towards the CdS light
     turn_right(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-    check_heading(Heading[3]); // 184
+    check_heading(Heading[3] + 2); // 184
     double jukebox;
     rightWheel.SetPercent(MOTOR_PERCENT);
     leftWheel.SetPercent(MOTOR_PERCENT);
@@ -615,19 +615,18 @@ int main(void)
         move_forward(MOTOR_PERCENT, 1.5 * COUNTS_INCHES, 0);
 
         // Hit jukebox button
-        turn_left(MOTOR_PERCENT, 45 * COUNTS_DEGREE);
+        turn_left(MOTOR_PERCENT, 50 * COUNTS_DEGREE);
         check_heading(270);
         move_forward(-MOTOR_PERCENT, COUNTS_INCHES, 0);
         servoForkLift.SetDegree(135);
-        move_forward(30, 0, 1);
+        move_forward(30, 0, 1.2);
         uwu();
 
         // Go to final button
-        move_forward(-MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
-        servoForkLift.SetDegree(40);
+        move_forward(-MOTOR_PERCENT, 4 * COUNTS_INCHES, 0);
         owo();
         turn_left(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
-        move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+        move_forward(MOTOR_PERCENT, 3.5 * COUNTS_INCHES, 0);
         turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
         excitedFace();
         move_forward(MOTOR_PERCENT, 0, 3);
