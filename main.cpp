@@ -18,8 +18,8 @@ FEHServo servoForkLift(FEHServo::Servo7);
 FEHServo servoRack(FEHServo::Servo0);
 
 // Servo, motor, and counts variables
-#define SERVO_MIN_FORKLIFT 754
-#define SERVO_MAX_FORKLIFT 2269
+#define SERVO_MIN_FORKLIFT 622
+#define SERVO_MAX_FORKLIFT 1922
 #define SERVO_MIN_RACK 736
 #define SERVO_MAX_RACK 2480
 #define MOTOR_PERCENT 50
@@ -27,7 +27,7 @@ FEHServo servoRack(FEHServo::Servo0);
 #define COUNTS_DEGREE 2.48
 
 // Defines for pulsing the robot
-#define PULSE_TIME .08
+#define PULSE_TIME .065
 #define PULSE_POWER 25
 
 // Orientation of QR Code
@@ -263,7 +263,7 @@ void calibrateRPS(void) {
         while(LCD.Touch(&touch_x, &touch_y));
 
         //Print RPS data for this path point to file
-        SD.FPrintf(fptr, "%f %f %f\n", RPS.X(), RPS.Y(), RPS.Heading());
+        SD.FPrintf(fptr, "%f %f\n", RPS.X(), RPS.Y());
     }
     LCD.Clear();
     //Close SD file
@@ -625,7 +625,7 @@ int main(void)
         turn_left(MOTOR_PERCENT, 52 * COUNTS_DEGREE);
         check_heading(270);
         move_forward(-MOTOR_PERCENT, COUNTS_INCHES, 0);
-        servoForkLift.SetDegree(135);
+        servoForkLift.SetDegree(150);
         move_forward(30, 0, 1.2);
         uwu();
 
