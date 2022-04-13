@@ -417,7 +417,7 @@ int main(void)
 
     // Move right to account for the movement left
     turn_right(MOTOR_PERCENT, 15 * COUNTS_DEGREE);
-    move_forward(MOTOR_PERCENT, COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, .7 * COUNTS_INCHES, 0);
     turn_left(MOTOR_PERCENT, 25 * COUNTS_DEGREE);  // 20
     check_heading(90);
 
@@ -427,7 +427,7 @@ int main(void)
     check_heading(184);  // 184
     move_forward(-MOTOR_PERCENT, 5.75 * COUNTS_INCHES, 0); // 5.5
     check_x(X[0], MINUS);  // 32.8
-    check_heading(184);
+    check_heading(182);
     
     // Rack and Pinion system
     servoRack.SetDegree(0);
@@ -439,7 +439,7 @@ int main(void)
         Sleep(.05);
     }
     uwu();
-    turn_right(MOTOR_PERCENT, 5 * COUNTS_DEGREE);
+    turn_right(MOTOR_PERCENT, 4 * COUNTS_DEGREE);
     check_heading(180);
     
     // Move towards the sink
@@ -517,7 +517,7 @@ int main(void)
     // Go towards hot plate
     owo();
     check_heading(0);
-    servoForkLift.SetDegree(150);
+    servoForkLift.SetDegree(155);
     if (iceCream != 0) {
         move_forward(MOTOR_PERCENT, 2.5 * COUNTS_INCHES, 0);
     } else {
@@ -528,7 +528,7 @@ int main(void)
     check_heading(90);
 
     // Move up to hot plate and flip it
-    move_forward(MOTOR_PERCENT, 0, 1);
+    move_forward(30, 0, 1.5);
     servoForkLift.SetDegree(70);
     Sleep(.2);
     turn_right(MOTOR_PERCENT, 25 * COUNTS_DEGREE);
@@ -564,7 +564,7 @@ int main(void)
         turn_right(MOTOR_PERCENT, 20 * COUNTS_DEGREE);
         check_heading(122);
     }
-    move_forward(MOTOR_PERCENT, 5 * COUNTS_INCHES, 0);
+    move_forward(MOTOR_PERCENT, 4.7 * COUNTS_INCHES, 0);
     servoForkLift.SetDegree(70);
     Sleep(.2);
     uwu();
@@ -597,27 +597,30 @@ int main(void)
     // Turn towards the CdS light
     turn_right(MOTOR_PERCENT, 40 * COUNTS_DEGREE);
     check_heading(180); // 184
-    double jukebox;
+    double jukebox, min = CdS.Value();
     rightWheel.SetPercent(MOTOR_PERCENT);
     leftWheel.SetPercent(MOTOR_PERCENT);
     bool jukeboxValue = true;
     while (jukeboxValue) {
-        if (CdS.Value() <= 1.0) {
+        if (CdS.Value() < min) {
+            min = CdS.Value();
+        }
+        if (CdS.Value() <= 1.2) {
             Sleep(.1);
             rightWheel.Stop();
             leftWheel.Stop();
-            jukebox = CdS.Value();
             jukeboxValue = false;
-        } else if (RPS.X() < 10.8) {
+        } else if (RPS.X() < X[3]) {
             check_x(X[3], MINUS); // 10.8
             jukeboxValue = false;
         }
+        jukebox = min;
     }
 
     LCD.Clear();
-    
+
     // Red
-    if (jukebox < .35) {
+    if (jukebox < .65) {
         LCD.WriteAt("Red", 100, 100);
         move_forward(MOTOR_PERCENT, 1.5 * COUNTS_INCHES, 0);
 
@@ -625,8 +628,8 @@ int main(void)
         turn_left(MOTOR_PERCENT, 52 * COUNTS_DEGREE);
         check_heading(270);
         move_forward(-MOTOR_PERCENT, COUNTS_INCHES, 0);
-        servoForkLift.SetDegree(150);
-        move_forward(30, 0, 1.2);
+        servoForkLift.SetDegree(140);
+        move_forward(40, 0, 1.2);
         uwu();
 
         // Go to final button
